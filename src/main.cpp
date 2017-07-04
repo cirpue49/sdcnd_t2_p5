@@ -97,6 +97,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          //mph to m/s
+          v*=0.44704;
           double delta = j[1]["steering_angle"];
           double acceleration = j[1]["throttle"];
 
@@ -129,8 +131,8 @@ int main() {
           // The cross track error is calculated by evaluating at polynomial at x, f(x)
           // and subtracting y.
           // f(x) = ax^3 + bx^2 + cx + d
-          // since x = 0, y = 0, cte = 0 - f(0) = - d,
-          double cte = -coeffs[0];
+          // since x = 0, y = 0, cte = f(0) - y = d,
+          double cte = coeffs[0];
 
           // epsi = psi - atan(f'(x))
           // since psi = 0, f'(0) = coeffs[1],

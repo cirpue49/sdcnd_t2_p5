@@ -13,14 +13,14 @@ using CppAD::AD;
 //less dt leads to unstable direction(car's orientation)
 //bigger dt tend to cause messing up predicted path
 
-size_t N = 20;
+size_t N = 10;
 double dt = 0.1;
 
 // Both the reference cross track and orientation errors are 0.
 // The reference velocity is set to 50 mph.
 double ref_cte = 0;
 double ref_epsi = 0;
-double ref_v = 50;
+double ref_v = 85*0.447;
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
