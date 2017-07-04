@@ -6,8 +6,14 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-// Larger paramators than 10, 0.1 are not stable
-size_t N = 10;
+// most stable paramators are chose from N = (5, 10, 15, 20, 25), dt = (0.05, 0.1, 0.15, 0.2)
+
+//less N made car lost its direction(forth and backwards)
+//bigger N made model predict different path(not optimal path)
+//less dt leads to unstable direction(car's orientation)
+//bigger dt tend to cause messing up predicted path
+
+size_t N = 20;
 double dt = 0.1;
 
 // Both the reference cross track and orientation errors are 0.
