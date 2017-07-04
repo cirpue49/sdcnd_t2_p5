@@ -20,7 +20,7 @@ double dt = 0.1;
 // The reference velocity is set to 50 mph.
 double ref_cte = 0;
 double ref_epsi = 0;
-double ref_v = 85*0.447;
+double ref_v = 60*0.447;
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
