@@ -6,14 +6,15 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
+// Larger paramators than 10, 0.1 are not stable
 size_t N = 10;
 double dt = 0.1;
 
 // Both the reference cross track and orientation errors are 0.
-// The reference velocity is set to 40 mph.
+// The reference velocity is set to 50 mph.
 double ref_cte = 0;
 double ref_epsi = 0;
-double ref_v = 40;
+double ref_v = 50;
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
@@ -69,7 +70,7 @@ class FG_eval {
 
     // Minimize the value gap between sequential actuations.
     for (int i = 0; i < N - 2; i++) {
-      fg[0] += CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 500*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
       fg[0] += CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
@@ -259,11 +260,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   std::cout << "Cost " << cost << std::endl;
 
   // TODO: Return the first actuator values. The variables can be accessed with
-  // `solution.x[i]`.
-  //
-  // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
-  // creates a 2 element double vector.
-//  auto x = solution.x;
+  // `solution.x[i]`
+  // pick up random number to display
   return {solution.x[delta_start],   solution.x[a_start],
           solution.x[y_start+1], solution.x[y_start+2], solution.x[y_start+4],
            solution.x[y_start+6], solution.x[y_start+8], solution.x[y_start+9],

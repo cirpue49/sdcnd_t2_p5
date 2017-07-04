@@ -104,37 +104,41 @@ int main() {
           double latency = 0.1;
           const double Lf = 2.67;
 
-//          px = px + v*cos(psi)*latency;
-//          py = py + v*sin(psi)*latency;
-//          psi = psi - v*delta/Lf*latency;
-//          v = v + acceleration*latency;
+          px = px + v*cos(psi)*latency;
+          py = py + v*sin(psi)*latency;
+          psi = psi - v*delta/Lf*latency;
+          v = v + acceleration*latency;
 
-          //Calculate steering angle and throttle using MPC.
+          //Converting global coordinate to local coordinate
           //Cast vector to eigen::vectorxd
           double* x_ptr = &ptsx[0];
           double* y_ptr = &ptsy[0];
           Eigen::Map<Eigen::VectorXd>e_ptsx(x_ptr, ptsx.size());
           Eigen::Map<Eigen::VectorXd>e_ptsy(y_ptr, ptsy.size());
 
-          // Fitting with the order of 3
+
           Eigen::VectorXd sub_x = e_ptsx - px * Eigen::VectorXd::Ones(6);
           Eigen::VectorXd sub_y = e_ptsy - py * Eigen::VectorXd::Ones(6);
 
           Eigen::VectorXd e_x = sub_x * cos(-psi) - sub_y * sin(-psi);
           Eigen::VectorXd e_y = sub_x * sin(-psi) + sub_y * cos(-psi);
 
+          // Fitting with the order of 3
           auto coeffs = polyfit(e_x, e_y, 3);
+
           // The cross track error is calculated by evaluating at polynomial at x, f(x)
           // and subtracting y.
+          // f(x) = ax^3 + bx^2 + cx + d
+          // since x = 0, y = 0, cte = 0 - f(0) = - d,
           double cte = -coeffs[0];
-          // Due to the sign starting at 0, the orientation error is -f'(x).
-          // derivative of ax^3 + bx^2 + cx + d
-          // 3ax^2 + 2bx + c
 
+          // epsi = psi - atan(f'(x))
+          // since psi = 0, f'(0) = coeffs[1],
           double epsi = -atan(coeffs[1]) ;
 
 
 
+          // In local coodinate, x = y = psi = 0
           Eigen::VectorXd state(6);
           state << 0, 0, 0, v, cte, epsi;
 
@@ -171,8 +175,6 @@ int main() {
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
-
-//          next_x_vals = vector<double> vec(e_x.data(), e_x.data() + e_x.rows() * e_x.cols());
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
@@ -188,7 +190,7 @@ int main() {
           //
           // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
           // SUBMITTING.
-          this_thread::sleep_for(chrono::milliseconds(0));
+          this_thread::sleep_for(chrono::milliseconds(100));
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {
